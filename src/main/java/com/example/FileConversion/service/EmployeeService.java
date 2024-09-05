@@ -2,10 +2,11 @@ package com.example.FileConversion.service;
 
 import com.example.FileConversion.model.Employee;
 import com.example.FileConversion.repository.EmployeeRepository;
+
 import com.itextpdf.text.*;
-import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +25,11 @@ public class EmployeeService {
     }
 
     private static final String CSV_SEPARATOR = ",";
-    private static final File IMPORT_FILE_PATH = new File("C:\\Users\\mehvishf\\Desktop\\BITS_Assessment\\FileConversion\\src\\main\\java\\com\\example\\FileConversion\\EmployeeData.csv");
-    private static final File EXPORT_FROM_DB_FILE_PATH = new File("C:\\Users\\mehvishf\\Desktop\\BITS_Assessment\\FileConversion\\EmployeeDataFromDB.csv");
-    private static final File EXPORT_FROM_LIST_FILE_PATH = new File("C:\\Users\\mehvishf\\Desktop\\BITS_Assessment\\FileConversion\\EmployeeDataFromList.csv");
-    private static final String PDF_EXPORT_PATH = "C:\\Users\\mehvishf\\Desktop\\BITS_Assessment\\FileConversion\\EmployeeData.pdf";
 
     // Import data from CSV to List of Employees
-    public List<Employee> importFromCSVtoList() {
+    public List<Employee> importFromCSVtoList(String filePath) {
         List<Employee> employees = new ArrayList<>();
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(IMPORT_FILE_PATH))) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             bufferedReader.readLine();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -45,13 +42,13 @@ public class EmployeeService {
         return employees;
     }
 
-    public void exportToCSVFromList() {
-        List<Employee> employees = new ArrayList<>();
-        employees.add(new Employee(4L, "Michael Brown", "Sales Representative", 60000.0, "Sales"));
-        employees.add(new Employee(5L, "Sarah Davis", "HR Specialist", 62000.0, "Human Resources"));
-        employees.add(new Employee(6L, "Chris Wilson", "Data Analyst", 68000.0, "Data Science"));
-        try (FileWriter fileWriter = new FileWriter(EXPORT_FROM_LIST_FILE_PATH, true)) {
-            fileWriter.append("id,name,position,salary,department\n");
+    // Export data to CSV from List of Employees
+    public void exportToCSVFromList(List<Employee> employees, String filePath) {
+        try (FileWriter fileWriter = new FileWriter(filePath, true)) {
+            File file = new File(filePath);
+            if (file.length() == 0) {
+                fileWriter.append("id,name,position,salary,department\n");
+            }
             for (Employee employee : employees) {
                 fileWriter.append(String.valueOf(employee.getId()))
                         .append(CSV_SEPARATOR)
@@ -64,14 +61,14 @@ public class EmployeeService {
                         .append(employee.getDepartment())
                         .append("\n");
             }
-
         } catch (IOException e) {
             throw new RuntimeException("Error while exporting data to CSV" + e);
         }
     }
 
-    public List<Employee> importFromCSVtoDB() {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(IMPORT_FILE_PATH))) {
+    // Import data from CSV to Database of Employees
+    public List<Employee> importFromCSVtoDB(String filePath) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(filePath))) {
             bufferedReader.readLine();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
@@ -89,9 +86,11 @@ public class EmployeeService {
         return employeeRepository.findAll();
     }
 
-    public void exportToCSVFromDB() {
-        try (FileWriter fileWriter = new FileWriter(EXPORT_FROM_DB_FILE_PATH, true)) {
-            if (EXPORT_FROM_DB_FILE_PATH.length() == 0) {
+    // Export data to CSV from Database of Employees
+    public void exportToCSVFromDB(String filePath) {
+        try (FileWriter fileWriter = new FileWriter(filePath, true)) {
+            File file = new File(filePath);
+            if (file.length() == 0) {
                 fileWriter.append("id,name,position,salary,department\n");
             }
 
@@ -115,11 +114,12 @@ public class EmployeeService {
 
     }
 
-    public void exportToPDFfromDB() {
+    // Export data to PDF from Database of Employees
+    public void exportToPDFfromDB(String filePath) {
         List<Employee> employees = employeeRepository.findAll();
         Document document = new Document();
         try {
-            PdfWriter.getInstance(document, new FileOutputStream(PDF_EXPORT_PATH));
+            PdfWriter.getInstance(document, new FileOutputStream(filePath));
             document.open();
 
             document.add(new Phrase("Employee Data"));
@@ -146,6 +146,6 @@ public class EmployeeService {
         } finally {
             document.close();
         }
-        System.out.println("PDF created successfully at " + PDF_EXPORT_PATH);
+        System.out.println("PDF created successfully at " + filePath);
     }
 }
