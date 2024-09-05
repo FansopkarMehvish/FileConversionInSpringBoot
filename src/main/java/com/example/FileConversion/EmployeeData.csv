@@ -1,0 +1,16 @@
+id,name,position,salary,department
+1,John Doe,Intern,75000,Engineering
+2,Jane Smith,Marketing Manager,65000,Marketing
+3,Emily Johnson,Product Designer,70000,Design
+4,Michael Brown,Sales Representative,60000,Sales
+5,Sarah Davis,HR Specialist,62000,Human Resources
+6,Chris Wilson,Data Analyst,68000,Data Science
+7,Amanda Lee,Project Manager,73000,Project Management
+8,David Clark,Network Engineer,72000,IT
+9,Linda Martin,UX Researcher,71000,Design
+10,James Lewis,Business Analyst,69000,Business Intelligence
+11,Megan Hall,Content Strategist,64000,Marketing
+12,Robert Young,Operations Manager,76000,Operations
+13,Jessica Turner,QA Engineer,67000,Quality Assurance
+14,Daniel Walker,System Administrator,74000,IT
+15,Alice Scott,Customer Support Specialist,61000,Customer Service
